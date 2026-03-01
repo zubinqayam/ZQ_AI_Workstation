@@ -2,6 +2,9 @@
 /target/
 Cargo.lock
 
+# Tauri generated schemas
+/gen/
+
 # Node / frontend
 node_modules/
 dist/
