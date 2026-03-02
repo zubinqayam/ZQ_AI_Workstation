@@ -1,0 +1,43 @@
+[package]
+name    = "zq-ai-workstation"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "zq_ai_workstation_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[bin]]
+name = "zq-ai-workstation"
+path = "src/main.rs"
+
+# Integration test for schema validation (runs without Tauri system libraries).
+# Usage: cargo test --test test_migrations --no-default-features
+[[test]]
+name = "test_migrations"
+path = "src/tests/test_migrations.rs"
+
+[features]
+# "tauri" is on by default so that `cargo build` / `cargo tauri dev` work
+# out of the box. Strip it for pure Rust / CI environments that lack GTK/WebKit:
+#   cargo test --test test_migrations --no-default-features
+default = ["tauri"]
+tauri = ["dep:tauri", "dep:tauri-plugin-sql", "dep:tauri-build"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [], optional = true }
+
+[dependencies]
+tauri            = { version = "2", features = [], optional = true }
+tauri-plugin-sql = { version = "2", features = ["sqlite"], optional = true }
+serde            = { version = "1", features = ["derive"] }
+serde_json       = "1"
+
+[dev-dependencies]
+rusqlite = { version = "0.31", features = ["bundled"] }
+tempfile = "3"
+
+[profile.release]
+opt-level = 3
+strip     = true
+lto       = true
